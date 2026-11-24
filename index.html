@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Desk | Ticket Raising</title>
+<style>
+:root{--navy:#101a33;--blue:#315efb;--cyan:#21c4d6;--bg:#f3f6fc;--ink:#17223b;--muted:#71809b;--line:#e5eaf3;--white:#fff;--red:#e05252;--green:#168b62}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 16px;font-weight:700}
+.primary{background:var(--blue);color:white}.soft{background:#edf1ff;color:#3154d9}.danger{background:#fff0f0;color:#c43d3d}.mutedbtn{background:#eef1f6;color:#45516b}
+.shell{min-height:100vh;display:grid;grid-template-columns:250px 1fr}.side{background:var(--navy);color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:26px}.brand{display:flex;gap:12px;align-items:center;padding:4px 8px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:grid;place-items:center;font-size:22px}.brand b{font-size:18px;letter-spacing:.3px}.brand small{display:block;color:#aebbd5;font-size:11px;letter-spacing:1.5px}.navlabel{font-size:10px;color:#8190af;letter-spacing:1.6px;padding:0 12px}.nav button{width:100%;text-align:left;background:transparent;color:#c5cee0;margin:3px 0;padding:12px;border-radius:10px}.nav button.active,.nav button:hover{background:#243354;color:white}.sidefoot{margin-top:auto;color:#9eabc5;font-size:12px;padding:10px}
+.main{min-width:0}.top{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px}.top small{color:var(--muted)}.profile{display:flex;align-items:center;gap:12px}.avatar{width:38px;height:38px;border-radius:50%;background:#e9efff;color:#315efb;display:grid;place-items:center;font-weight:800}
+.content{padding:30px;max-width:1300px;margin:auto}.welcome{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:24px}.welcome h1{margin:0 0 5px;font-size:27px}.welcome p{margin:0;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}.stat,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px #1c315008}.stat span{color:var(--muted);font-size:13px}.stat strong{display:block;font-size:27px;margin-top:6px}.panel{margin-bottom:18px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.panel h2{font-size:17px;margin:0}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-weight:700;font-size:13px;color:#34415d}.field input,.field select,.field textarea{width:100%;border:1px solid #dce3ef;border-radius:10px;padding:11px 12px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #315efb18}.field textarea{min-height:100px;resize:vertical}.choices{display:flex;flex-wrap:wrap;gap:9px}.choice{border:1px solid #dce3ef;background:#fff;color:#485571;border-radius:10px;padding:9px 12px;font-size:13px}.choice.selected{background:#edf1ff;border-color:#8da3ff;color:#244bd8}.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}th{color:var(--muted);font-weight:700;background:#fafbfe}.pill{display:inline-block;border-radius:20px;padding:4px 9px;font-size:11px;font-weight:800;background:#edf1ff;color:#3154d9}.pill.open{background:#fff3dc;color:#9b6500}.pill.progress{background:#eaf2ff;color:#2860c7}.pill.resolved{background:#e6f7ef;color:#13744f}.hidden{display:none!important}.loginwrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at top right,#dce7ff,transparent 40%),var(--bg)}.login{width:min(460px,100%);background:white;border:1px solid var(--line);border-radius:20px;padding:30px;box-shadow:0 20px 70px #1c315018}.login h1{margin:12px 0 4px}.login p{color:var(--muted);margin:0 0 22px}.note{background:#f1f5ff;border:1px solid #dce6ff;color:#435477;padding:12px;border-radius:10px;font-size:12px;margin:15px 0}.toast{position:fixed;right:20px;bottom:20px;background:#17223b;color:#fff;padding:13px 18px;border-radius:11px;box-shadow:0 8px 30px #0002;z-index:5}.empty{text-align:center;color:var(--muted);padding:25px}.small{font-size:12px;color:var(--muted)}.inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.modal-bg{position:fixed;inset:0;background:rgba(16,26,51,.45);display:grid;place-items:center;z-index:20;padding:16px}
+.modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;box-shadow:0 24px 80px #0003;padding:24px}
+.modal h2{margin:0 0 6px;font-size:20px}.modal .meta{color:var(--muted);font-size:13px;margin-bottom:16px}
+.history{border-left:3px solid var(--line);padding-left:14px;margin-top:14px}
+.history-item{margin-bottom:12px;font-size:13px}.history-item b{color:var(--ink)}.history-item .time{color:var(--muted);font-size:12px}
+@media(max-width:850px){.shell{grid-template-columns:1fr}.side{padding:14px;gap:12px}.nav{display:flex;overflow:auto}.navlabel,.sidefoot{display:none}.nav button{white-space:nowrap;width:auto}.top{padding:0 18px}.content{padding:20px 14px}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.welcome{display:block}.welcome button{margin-top:14px}.top{height:65px}.grid{gap:9px}.stat{padding:14px}.stat strong{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="loginView" class="loginwrap">
+ <div class="login">
+  <div class="brand" style="padding:0;color:#17223b"><div class="logo">IT</div><div><b>IT DESK</b><small style="color:#71809b">TICKET RAISING PORTAL</small></div></div>
+  <h1 id="loginTitle">Welcome to IT Desk</h1><p id="loginSubtitle">Sign in to raise and manage support tickets.</p>
+  <div id="firstSetup" class="hidden">
+   <div class="note">First-time setup: the main administrator account is preconfigured for <b>Sid</b> using the phone number below. Create a password to activate it on this browser.</div>
+   <div class="field"><label>Administrator phone</label><input id="setupPhone" value="+91 90002 90043" readonly></div>
+   <div class="field" style="margin-top:12px"><label>Create password</label><input id="setupPass" type="password" placeholder="At least 6 characters"></div>
+   <button class="primary" style="width:100%;margin-top:16px" onclick="activateAdmin()">Activate main admin</button>
+  </div>
+  <div id="loginForm">
+   <div class="field"><label>Phone number / User ID</label><input id="loginUser" placeholder="Enter phone number or user ID"></div>
+   <div class="field" style="margin-top:13px"><label>Password</label><input id="loginPass" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')login()"></div>
+   <button class="primary" style="width:100%;margin-top:18px" onclick="login()">Sign in</button>
+   <div class="note">Main Admin: <b>Sid</b> · +91 90002 90043<br>Ask your IT administrator to create your user account.</div>
+  </div>
+ </div>
+</div>
+
+<div id="app" class="shell hidden">
+ <aside class="side">
+  <div class="brand"><div class="logo">IT</div><div><b>IT DESK</b><small>SUPPORT CENTER</small></div></div>
+  <div class="navlabel">WORKSPACE</div>
+  <nav class="nav" id="nav">
+   <button class="active" data-page="dashboard" onclick="showPage('dashboard',this)">▦ &nbsp; Dashboard</button>
+   <button data-page="newticket" onclick="showPage('newticket',this)">＋ &nbsp; Raise a Ticket</button>
+   <button data-page="tickets" onclick="showPage('tickets',this)">▤ &nbsp; Ticket History</button>
+   <button class="adminOnly" data-page="users" onclick="showPage('users',this)">♙ &nbsp; User Management</button>
+  </nav>
+  <div class="sidefoot">Need help? Contact your IT administrator.<br><br>IT Desk · Internal Support</div>
+ </aside>
+ <main class="main">
+  <header class="top"><div><b id="topTitle">Dashboard</b><br><small>IT Support & Ticket Management</small></div><div class="profile"><div><b id="whoName">User</b><br><small id="whoRole">Employee</small></div><div class="avatar" id="avatar">U</div><button class="mutedbtn" onclick="logout()">Log out</button></div></header>
+  <div class="content">
+   <section id="page-dashboard">
+    <div class="welcome"><div><h1>Good to see you, <span id="helloName">there</span> 👋</h1><p>Track support requests and keep your workplace running smoothly.</p></div><button class="primary" onclick="showPage('newticket')">＋ Raise a Ticket</button></div>
+    <div class="grid">
+     <div class="stat"><span>Total tickets</span><strong id="statTotal">0</strong></div>
+     <div class="stat"><span>Open</span><strong id="statOpen">0</strong></div>
+     <div class="stat"><span>In progress</span><strong id="statProgress">0</strong></div>
+     <div class="stat"><span>Resolved</span><strong id="statResolved">0</strong></div>
+    </div>
+    <div class="panel"><div class="panelhead"><h2>Recent tickets</h2><button class="soft" onclick="showPage('tickets')">View all</button></div><div id="recentTable"></div></div>
+   </section>
+
+   <section id="page-newticket" class="hidden">
+    <div class="welcome"><div><h1>Raise a support ticket</h1><p>Tell the IT team what is not working. Add clear details to help us resolve it faster.</p></div></div>
+    <div class="panel">
+     <form id="ticketForm" onsubmit="submitTicket(event)">
+      <div class="formgrid">
+       <div class="field"><label>Employee name *</label><input id="empName" required placeholder="Your full name"></div>
+       <div class="field"><label>Employee ID *</label><input id="empId" required placeholder="Employee ID"></div>
+       <div class="field"><label>Department *</label><select id="department" required><option value="">Select department</option><option>IT</option><option>HR</option><option>Finance</option><option>Operations</option><option>Sales</option><option>Marketing</option><option>Administration</option><option>Other</option></select></div>
+       <div class="field"><label>Floor / Location *</label><input id="floor" required placeholder="e.g. Floor 2, Bay A"></div>
+       <div class="field full"><label>Issue category *</label><div class="choices" id="categoryChoices">
+        <button type="button" class="choice selected" data-cat="System / Desktop" onclick="pickCat(this)">🖥 System / Desktop</button>
+        <button type="button" class="choice" data-cat="Network / Internet" onclick="pickCat(this)">🌐 Network / Internet</button>
+        <button type="button" class="choice" data-cat="Disk / Storage" onclick="pickCat(this)">💽 Disk / Storage</button>
+        <button type="button" class="choice" data-cat="System hanging" onclick="pickCat(this)">⏳ System hanging</button>
+        <button type="button" class="choice" data-cat="Slow performance" onclick="pickCat(this)">🐢 Slow performance</button>
+        <button type="button" class="choice" data-cat="Software / Application" onclick="pickCat(this)">📦 Software / App</button>
+        <button type="button" class="choice" data-cat="Email / Account access" onclick="pickCat(this)">✉ Email / Access</button>
+        <button type="button" class="choice" data-cat="Printer / Peripheral" onclick="pickCat(this)">🖨 Printer / Peripheral</button>
+        <button type="button" class="choice" data-cat="Other" onclick="pickCat(this)">＋ Other</button>
+       </div></div>
+       <div class="field"><label>Priority</label><select id="priority"><option>Normal</option><option>Low</option><option>High</option><option>Urgent</option></select></div>
+       <div class="field"><label>Contact number</label><input id="contact" placeholder="Optional contact number"></div>
+       <div class="field full"><label>Describe the problem *</label><textarea id="description" required placeholder="What happened? When did it start? Any error message?"></textarea></div>
+      </div>
+      <div class="actions"><button type="reset" class="mutedbtn" onclick="resetCat()">Clear</button><button type="submit" class="primary">Submit ticket →</button></div>
+     </form>
+    </div>
+   </section>
+
+   <section id="page-tickets" class="hidden">
+    <div class="welcome"><div><h1>Ticket history</h1><p>Review requests, track status, and see who resolved each ticket.</p></div></div>
+    <div class="panel">
+     <div class="panelhead">
+      <h2>All tickets</h2>
+      <div class="inline">
+        <input id="ticketSearch" placeholder="Search tickets..." oninput="renderTickets()" style="border:1px solid #dce3ef;border-radius:9px;padding:9px">
+      </div>
+     </div>
+     <div id="ticketTable"></div>
+    </div>
+   </section>
+
+   <section id="page-users" class="hidden">
+    <div class="welcome"><div><h1>User management</h1><p>Create employee and technical admin accounts. Main admin has full control.</p></div></div>
+    <div class="panel">
+     <h2 style="margin-bottom:16px">Create user account</h2>
+     <form onsubmit="createUser(event)">
+      <div class="formgrid">
+       <div class="field"><label>Full name *</label><input id="newName" required placeholder="Full name"></div>
+       <div class="field"><label>Phone number / Login ID *</label><input id="newPhone" required placeholder="+91... or employee ID"></div>
+       <div class="field"><label>Role *</label>
+        <select id="newRole">
+         <option value="Employee">Employee</option>
+         <option value="Technical Admin">Technical Admin</option>
+         <option value="Admin">Admin</option>
+        </select>
+       </div>
+       <div class="field"><label>Temporary password *</label><input id="newPassword" required minlength="6" placeholder="At least 6 characters"></div>
+      </div>
+      <div class="actions"><button class="primary">＋ Create user</button></div>
+     </form>
+    </div>
+    <div class="panel">
+     <div class="panelhead"><h2>Registered users</h2></div>
+     <div id="userTable"></div>
+    </div>
+   </section>
+  </div>
+ </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<div id="ticketModal" class="modal-bg hidden" onclick="if(event.target===this)closeModal()"></div>
+
+<script>
+const ADMIN_PHONE = '+91 90002 90043';
+
+/* ===== Seed: only Main Admin "Sid" — other users created by admin ===== */
+let users = JSON.parse(localStorage.getItem('itdesk_users') || 'null');
+let tickets = JSON.parse(localStorage.getItem('itdesk_tickets') || '[]');
+let current = null;
+let selectedCat = 'System / Desktop';
+
+if (!users) {
+  users = [{ name: 'Sid', login: ADMIN_PHONE, role: 'Main Admin', password: null }];
+  saveUsers();
+}
+
+function saveUsers() { localStorage.setItem('itdesk_users', JSON.stringify(users)); }
+function saveTickets() { localStorage.setItem('itdesk_tickets', JSON.stringify(tickets)); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 2800);
+}
+
+function init() {
+  const admin = users.find(u => u.role === 'Main Admin' && u.login === ADMIN_PHONE);
+  if (admin && !admin.password) {
+    document.getElementById('firstSetup').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('loginTitle').textContent = 'Activate main admin';
+    document.getElementById('loginSubtitle').textContent = 'Set a password for the administrator account.';
+  }
+}
+
+function activateAdmin() {
+  const p = document.getElementById('setupPass').value;
+  if (p.length < 6) return toast('Password must be at least 6 characters.');
+  const a = users.find(u => u.role === 'Main Admin');
+  a.password = p;
+  saveUsers();
+  toast('Main admin activated. Please sign in.');
+  document.getElementById('firstSetup').classList.add('hidden');
+  document.getElementById('loginForm').classList.remove('hidden');
+  document.getElementById('loginTitle').textContent = 'Welcome to IT Desk';
+  document.getElementById('loginSubtitle').textContent = 'Sign in to raise and manage support tickets.';
+  document.getElementById('loginUser').value = ADMIN_PHONE;
+}
+
+function login() {
+  const id = document.getElementById('loginUser').value.trim().toLowerCase();
+  const pw = document.getElementById('loginPass').value;
+  const u = users.find(x => x.login.toLowerCase() === id);
+  if (!u || !u.password || u.password !== pw) {
+    return toast('Invalid login details. Contact the main admin if you need an account.');
+  }
+  current = u;
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('whoName').textContent = u.name;
+  document.getElementById('whoRole').textContent = u.role;
+  document.getElementById('avatar').textContent = u.name.charAt(0).toUpperCase();
+  document.getElementById('helloName').textContent = u.name;
+  document.querySelectorAll('.adminOnly').forEach(x =>
+    x.classList.toggle('hidden', !['Main Admin', 'Admin'].includes(u.role))
+  );
+  document.querySelector('[data-page="newticket"]').classList.toggle('hidden', u.role === 'Technical Admin');
+  document.querySelector('[data-page="tickets"]').classList.remove('hidden');
+  showPage('dashboard');
+  refresh();
+}
+
+function logout() {
+  current = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginView').classList.remove('hidden');
+  document.getElementById('loginPass').value = '';
+}
+
+function showPage(page, btn) {
+  if (!current) return;
+  document.querySelectorAll('[id^="page-"]').forEach(x => x.classList.add('hidden'));
+  const el = document.getElementById('page-' + page);
+  if (!el) return;
+  el.classList.remove('hidden');
+  document.querySelectorAll('.nav button').forEach(x =>
+    x.classList.toggle('active', x.dataset.page === page)
+  );
+  document.getElementById('topTitle').textContent = {
+    dashboard: 'Dashboard',
+    newticket: 'Raise a Ticket',
+    tickets: 'Ticket History',
+    users: 'User Management'
+  }[page];
+  if (page === 'tickets') renderTickets();
+  if (page === 'users') renderUsers();
+}
+
+function visibleTickets() {
+  if (['Main Admin', 'Admin', 'Technical Admin'].includes(current.role)) return tickets;
+  return tickets.filter(t => t.login === current.login);
+}
+
+function refresh() {
+  const ts = visibleTickets();
+  document.getElementById('statTotal').textContent = ts.length;
+  document.getElementById('statOpen').textContent = ts.filter(t => t.status === 'Open').length;
+  document.getElementById('statProgress').textContent = ts.filter(t => t.status === 'In Progress').length;
+  document.getElementById('statResolved').textContent = ts.filter(t => t.status === 'Resolved').length;
+  document.getElementById('recentTable').innerHTML = tableHTML(ts.slice().reverse().slice(0, 5), false);
+}
+
+function pickCat(b) {
+  document.querySelectorAll('.choice').forEach(x => x.classList.remove('selected'));
+  b.classList.add('selected');
+  selectedCat = b.dataset.cat;
+}
+
+function resetCat() {
+  selectedCat = 'System / Desktop';
+  document.querySelectorAll('.choice').forEach((x, i) => x.classList.toggle('selected', i === 0));
+}
+
+function submitTicket(e) {
+  e.preventDefault();
+  if (current.role === 'Technical Admin') return;
+  const t = {
+    id: 'IT-' + String(Date.now()).slice(-7),
+    login: current.login,
+    employee: document.getElementById('empName').value.trim(),
+    empId: document.getElementById('empId').value.trim(),
+    department: document.getElementById('department').value,
+    floor: document.getElementById('floor').value.trim(),
+    category: selectedCat,
+    priority: document.getElementById('priority').value,
+    contact: document.getElementById('contact').value.trim(),
+    description: document.getElementById('description').value.trim(),
+    status: 'Open',
+    created: new Date().toLocaleString(),
+    assigned: 'Unassigned',
+    resolvedBy: null,
+    updates: [{ by: current.name, status: 'Open', note: 'Ticket created', at: new Date().toLocaleString() }]
+  };
+  tickets.push(t);
+  saveTickets();
+  e.target.reset();
+  resetCat();
+  toast('Ticket ' + t.id + ' raised successfully.');
+  refresh();
+  showPage('tickets');
+}
+
+function tableHTML(arr, allowUpdate) {
+  if (!arr.length) return '<div class="empty">No tickets found yet.</div>';
+  return '<div class="tablewrap"><table><thead><tr>' +
+    '<th>Ticket ID</th><th>Employee</th><th>Issue</th><th>Priority</th><th>Status</th><th>Resolved By</th><th>Created</th>' +
+    (allowUpdate ? '<th>Action</th>' : '') +
+    '</tr></thead><tbody>' +
+    arr.map(t => {
+      const resolvedBy = t.resolvedBy || (t.status === 'Resolved' && t.updates?.length
+        ? (t.updates.filter(u => u.status === 'Resolved').pop()?.by || '—')
+        : '—');
+      return '<tr>' +
+        '<td><b>' + esc(t.id) + '</b></td>' +
+        '<td>' + esc(t.employee) + '<br><span class="small">' + esc(t.empId) + ' · ' + esc(t.department) + '</span></td>' +
+        '<td>' + esc(t.category) + '<br><span class="small">' + esc(t.floor) + '</span></td>' +
+        '<td>' + esc(t.priority) + '</td>' +
+        '<td><span class="pill ' + (t.status === 'Open' ? 'open' : t.status === 'Resolved' ? 'resolved' : 'progress') + '">' + esc(t.status) + '</span></td>' +
+        '<td>' + esc(resolvedBy) + '</td>' +
+        '<td>' + esc(t.created) + '</td>' +
+        (allowUpdate
+          ? '<td><button class="soft" onclick="openTicketModal(\'' + t.id + '\')">Manage</button></td>'
+          : '') +
+        '</tr>';
+    }).join('') +
+    '</tbody></table></div>';
+}
+
+function renderTickets() {
+  const q = (document.getElementById('ticketSearch')?.value || '').toLowerCase();
+  const arr = visibleTickets()
+    .filter(t => (t.id + ' ' + t.employee + ' ' + t.empId + ' ' + t.category + ' ' + t.description + ' ' + (t.resolvedBy || '')).toLowerCase().includes(q))
+    .slice()
+    .reverse();
+  document.getElementById('ticketTable').innerHTML = tableHTML(
+    arr,
+    ['Main Admin', 'Admin', 'Technical Admin'].includes(current.role)
+  );
+}
+
+function openTicketModal(id) {
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+  const canManage = ['Main Admin', 'Admin', 'Technical Admin'].includes(current.role);
+  const techAdmins = users.filter(u => u.role === 'Technical Admin' || u.role === 'Main Admin' || u.role === 'Admin');
+
+  let historyHtml = '';
+  if (t.updates && t.updates.length) {
+    historyHtml = '<div class="history"><b style="font-size:13px">Activity history</b>' +
+      t.updates.slice().reverse().map(u =>
+        '<div class="history-item"><b>' + esc(u.by) + '</b> → ' + esc(u.status) +
+        (u.note ? ' <span class="small">(' + esc(u.note) + ')</span>' : '') +
+        '<div class="time">' + esc(u.at) + '</div></div>'
+      ).join('') + '</div>';
+  }
+
+  const modal = document.getElementById('ticketModal');
+  modal.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2>${esc(t.id)}</h2>
+      <div class="meta">${esc(t.category)} · ${esc(t.priority)} priority · Created ${esc(t.created)}</div>
+      <div class="formgrid" style="margin-bottom:12px">
+        <div class="field"><label>Employee</label><div>${esc(t.employee)} (${esc(t.empId)})</div></div>
+        <div class="field"><label>Department / Floor</label><div>${esc(t.department)} · ${esc(t.floor)}</div></div>
+        <div class="field full"><label>Description</label><div style="white-space:pre-wrap">${esc(t.description)}</div></div>
+        <div class="field"><label>Current status</label><div><span class="pill ${t.status === 'Open' ? 'open' : t.status === 'Resolved' ? 'resolved' : 'progress'}">${esc(t.status)}</span></div></div>
+        <div class="field"><label>Assigned to</label><div>${esc(t.assigned || 'Unassigned')}</div></div>
+        <div class="field"><label>Resolved by</label><div>${esc(t.resolvedBy || '—')}</div></div>
+      </div>
+      ${historyHtml}
+      ${canManage ? `
+      <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+      <div class="formgrid">
+        <div class="field">
+          <label>Update status</label>
+          <select id="modalStatus">
+            <option ${t.status === 'Open' ? 'selected' : ''}>Open</option>
+            <option ${t.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+            <option ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Assign to</label>
+          <select id="modalAssign">
+            <option value="Unassigned">Unassigned</option>
+            ${techAdmins.map(u => `<option value="${esc(u.name)}" ${t.assigned === u.name ? 'selected' : ''}>${esc(u.name)} (${esc(u.role)})</option>`).join('')}
+          </select>
+        </div>
+        <div class="field full">
+          <label>Note (optional)</label>
+          <input id="modalNote" placeholder="e.g. Replaced RAM, cleared cache...">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="mutedbtn" onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="saveTicketUpdate('${t.id}')">Save changes</button>
+      </div>` : '<div class="actions"><button class="mutedbtn" onclick="closeModal()">Close</button></div>'}
+    </div>`;
+  modal.classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('ticketModal').classList.add('hidden');
+  document.getElementById('ticketModal').innerHTML = '';
+}
+
+function saveTicketUpdate(id) {
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+  const status = document.getElementById('modalStatus').value;
+  const assign = document.getElementById('modalAssign').value;
+  const note = (document.getElementById('modalNote').value || '').trim();
+
+  if (!['Open', 'In Progress', 'Resolved'].includes(status)) {
+    return toast('Invalid status.');
+  }
+
+  t.status = status;
+  t.assigned = assign;
+  if (status === 'Resolved') {
+    t.resolvedBy = current.name;
+  } else if (status !== 'Resolved') {
+    t.resolvedBy = null;
+  }
+
+  t.updates = t.updates || [];
+  t.updates.push({
+    by: current.name,
+    status,
+    note: note || (assign !== 'Unassigned' ? 'Assigned to ' + assign : ''),
+    at: new Date().toLocaleString()
+  });
+
+  saveTickets();
+  closeModal();
+  renderTickets();
+  refresh();
+  toast('Ticket updated successfully.');
+}
+
+function createUser(e) {
+  e.preventDefault();
+  if (current.role !== 'Main Admin' && current.role !== 'Admin') return;
+  const login = document.getElementById('newPhone').value.trim();
+  if (users.some(u => u.login.toLowerCase() === login.toLowerCase())) {
+    return toast('This login ID already exists.');
+  }
+  const role = document.getElementById('newRole').value;
+  if (current.role === 'Admin' && role !== 'Employee') {
+    return toast('Admins can create Employee accounts only.');
+  }
+  users.push({
+    name: document.getElementById('newName').value.trim(),
+    login,
+    role,
+    password: document.getElementById('newPassword').value
+  });
+  saveUsers();
+  e.target.reset();
+  renderUsers();
+  toast('User account created successfully.');
+}
+
+function renderUsers() {
+  document.getElementById('userTable').innerHTML =
+    '<div class="tablewrap"><table><thead><tr><th>Name</th><th>Login ID / Phone</th><th>Role</th><th>Account</th></tr></thead><tbody>' +
+    users.map(u =>
+      '<tr><td><b>' + esc(u.name) + '</b></td><td>' + esc(u.login) + '</td><td>' + esc(u.role) + '</td><td><span class="pill resolved">Active</span></td></tr>'
+    ).join('') +
+    '</tbody></table></div>';
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
+  );
+}
+
+init();
+</script>
+</body>
+</html>
